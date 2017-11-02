@@ -14,6 +14,7 @@ type Transaction struct {
 	FixedCurrency string    `json:"fixedCurrency"`
 	TaxCurrency   string    `json:"taxCurrency"`
 	External      string    `json:"external"`
+	ExternalKey   string    `json:"externalKey"`
 	Login         string    `json:"login"`
 }
 
