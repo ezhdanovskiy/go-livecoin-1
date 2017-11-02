@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Deposit struct {
+type Transaction struct {
 	Id            string    `json:"id"`
 	Type          string    `json:"type"`
 	Date          time.Time `json:"date"`
@@ -17,9 +17,9 @@ type Deposit struct {
 	Login         string    `json:"login"`
 }
 
-func (t *Deposit) UnmarshalJSON(data []byte) error {
+func (t *Transaction) UnmarshalJSON(data []byte) error {
 	var err error
-	type Alias Deposit
+	type Alias Transaction
 	aux := &struct {
 		Date int64 `json:"date"`
 		*Alias
@@ -29,6 +29,6 @@ func (t *Deposit) UnmarshalJSON(data []byte) error {
 	if err = json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
-	t.Date = time.Unix(aux.Date, 0)
+	t.Date = time.Unix(aux.Date / 1000, 0)
 	return nil
 }
