@@ -3,7 +3,6 @@ package livecoin
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"time"
 	"strconv"
