@@ -3,6 +3,8 @@ package livecoin
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"time"
 	"strconv"
@@ -31,6 +33,23 @@ func NewWithCustomTimeout(apiKey, apiSecret string, timeout time.Duration) *Live
 	return &Livecoin{client}
 }
 
+// handleErr gets JSON response from livecoin API en deal with error
+func handleErr(r interface{}) error {
+	switch v := r.(type) {
+	case map[string]interface{}:
+		errorMessage := r.(map[string]interface{})["errorMessage"]
+		if errorMessage != nil && errorMessage.(string) != "" {
+			return errors.New(errorMessage.(string))
+		}
+	case []interface{}:
+		return nil
+	default:
+		return fmt.Errorf("I don't know about type %T!\n", v)
+	}
+
+	return nil
+}
+
 // livecoin represent a livecoin client
 type Livecoin struct {
 	client *client
@@ -49,13 +68,13 @@ func (b *Livecoin) GetBalances() (balances []Balance, err error) {
 	if err != nil {
 		return
 	}
-	//var response json.RawMessage
-	//if err = json.Unmarshal(r, &response); err != nil {
-	//	return
-	//}
-	//if err = handleErr(response); err != nil {
-	//	return
-	//}
+	var response interface{}
+	if err = json.Unmarshal(r, &response); err != nil {
+		return
+	}
+	if err = handleErr(response); err != nil {
+		return
+	}
 	err = json.Unmarshal(r, &balances)
 	return
 }
@@ -67,17 +86,16 @@ func (b *Livecoin) GetBalance(currency string) (balance Balance, err error) {
 	if err != nil {
 		return
 	}
-	//var response jsonResponse
-	//if err = json.Unmarshal(r, &response); err != nil {
-	//	return
-	//}
-	//if err = handleErr(response); err != nil {
-	//	return
-	//}
+	var response interface{}
+	if err = json.Unmarshal(r, &response); err != nil {
+		return
+	}
+	if err = handleErr(response); err != nil {
+		return
+	}
 	err = json.Unmarshal(r, &balance)
 	return
 }
-
 
 // GetTrades used to retrieve your trade history.
 // market string literal for the market (ie. BTC/LTC). If set to "all", will return for all market
@@ -90,13 +108,13 @@ func (b *Livecoin) GetTrades(currencyPair string) (trades []Trade, err error) {
 	if err != nil {
 		return
 	}
-	//var response jsonResponse
-	//if err = json.Unmarshal(r, &response); err != nil {
-	//	return
-	//}
-	//if err = handleErr(response); err != nil {
-	//	return
-	//}
+	var response interface{}
+	if err = json.Unmarshal(r, &response); err != nil {
+		return
+	}
+	if err = handleErr(response); err != nil {
+		return
+	}
 	err = json.Unmarshal(r, &trades)
 	return
 }
@@ -111,13 +129,13 @@ func (b *Livecoin) GetTransactions(start uint64, end uint64) (transactions []Tra
 	if err != nil {
 		return
 	}
-	//var response jsonResponse
-	//if err = json.Unmarshal(r, &response); err != nil {
-	//	return
-	//}
-	//if err = handleErr(response); err != nil {
-	//	return
-	//}
+	var response interface{}
+	if err = json.Unmarshal(r, &response); err != nil {
+		return
+	}
+	if err = handleErr(response); err != nil {
+		return
+	}
 	err = json.Unmarshal(r, &transactions)
 	return
 }
