@@ -115,6 +115,11 @@ func (b *Livecoin) GetTrades(currencyPair string) (trades []Trade, err error) {
 	if err = handleErr(response); err != nil {
 		return
 	}
+	if res, ok := response.(map[string]interface{}); ok {
+		if exception, ok := res["exception"]; ok && exception == "Data not found" {
+			return
+		}
+	}
 	err = json.Unmarshal(r, &trades)
 	return
 }
