@@ -151,6 +151,7 @@ func (c *client) do(method string, ressource string, payload map[string]string, 
 		sig := hex.EncodeToString(mac.Sum(nil))
 		req.Header.Add("Api-key", c.apiKey)
 		req.Header.Add("Sign", strings.ToUpper(sig))
+		//fmt.Println("Sign", strings.ToUpper(sig))
 	}
 
 	resp, err := c.doTimeoutRequest(connectTimer, req)

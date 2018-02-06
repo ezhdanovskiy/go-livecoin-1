@@ -56,8 +56,8 @@ type Livecoin struct {
 }
 
 // set enable/disable http request/response dump
-func (c *Livecoin) SetDebug(enable bool) {
-	c.client.debug = enable
+func (b *Livecoin) SetDebug(enable bool) {
+	b.client.debug = enable
 }
 
 // Account
@@ -142,5 +142,21 @@ func (b *Livecoin) GetTransactions(start uint64, end uint64) (transactions []Tra
 		return
 	}
 	err = json.Unmarshal(r, &transactions)
+	return
+}
+
+func (b *Livecoin) GetClientOrders(openClosed string) (clientOrders ClientOrders, err error) {
+	r, err := b.client.do("GET", "exchange/client_orders", map[string]string{"openClosed": openClosed}, true)
+	if err != nil {
+		return
+	}
+	var response interface{}
+	if err = json.Unmarshal(r, &response); err != nil {
+		return
+	}
+	if err = handleErr(response); err != nil {
+		return
+	}
+	err = json.Unmarshal(r, &clientOrders)
 	return
 }
